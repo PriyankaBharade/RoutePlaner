@@ -8,7 +8,8 @@ class  RecieptHistory extends StatelessWidget{
             children: [
             GestureDetector(
             onTap: () => {
-            Navigator.of(context).pushNamed('/RecieptHistory')},
+            //Navigator.of(context).pushNamed('/RecieptHistory')
+            },
             child : Container(
             color: Colors.transparent,
             child: Container(

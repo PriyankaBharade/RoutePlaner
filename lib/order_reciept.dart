@@ -7,7 +7,7 @@ class OrderReciept extends StatelessWidget{
             children: [
             GestureDetector(
             onTap: () => {
-            Navigator.of(context).pushNamed('/RecieptHistory')},
+            Navigator.of(context).pushNamed('/bookings')},
             child : Container(
             color: Colors.transparent,
             child: Container(

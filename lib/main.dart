@@ -30,8 +30,7 @@ class MyApplication extends StatelessWidget {
     '/Order':(BuildContext context) => new OrderScreen(),
     '/RoutePlan':(BuildContext context) => new RoutePlan(),
     '/OrderReciept':(BuildContext context) => new OrderReciept(),
-    '/RecieptHistory':(BuildContext context) => new RecieptHistory() 
-    '/RoutePlan':(BuildContext context) => new RoutePlan(), 
+    '/RecieptHistory':(BuildContext context) => new RecieptHistory() ,
     '/bookings':(BuildContext context)=>new Bookings(),
    },
     );

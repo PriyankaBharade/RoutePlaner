@@ -68,7 +68,7 @@ Widget _Details(title, buttonColor, context) {
   );
 }
 
-Widget _order_id_button() {
+Widget _order_id_button(BuildContext context) {
   return RaisedButton(
     textColor: Colors.blue,
     splashColor: Colors.white,
@@ -77,7 +77,9 @@ Widget _order_id_button() {
       borderRadius: new BorderRadius.circular(10.0),
     ),
     child: Text('Order ID - 123456789'),
-    onPressed: () {},
+    onPressed: () {
+       Navigator.of(context).pushNamed('/RecieptHistory');
+    },
   );
 }
 
@@ -110,7 +112,7 @@ _showSimpleModalDialog(context) {
                         children: [
                           Container(
                             padding: EdgeInsets.all(10),
-                            child: _order_id_button(),
+                            child: _order_id_button(context),
                           ),
                           Container(
                             padding: EdgeInsets.all(10),
