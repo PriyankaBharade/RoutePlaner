@@ -11,7 +11,7 @@ class RoutePlan extends StatelessWidget {
             Padding(padding: EdgeInsets.only(right: 30),
             child: GestureDetector(
             onTap: () => {
-            Navigator.of(context).pushNamed('/RoutePlan')},
+            Navigator.of(context).pushNamed('/OrderReciept')},
             child : Container(
             color: Colors.transparent,
             child: Container(
