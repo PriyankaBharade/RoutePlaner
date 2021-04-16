@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:routeplan/route_plan.dart';
 import 'package:routeplan/signup_screen.dart';
 import 'package:routeplan/welcome_screen.dart';
 import 'package:routeplan/order_screen.dart';
+
 
 import 'login_screen.dart';
 
@@ -20,7 +22,8 @@ home : WelcomeScreen(),
 routes: <String,WidgetBuilder>{
     '/login':(BuildContext context) => new LoginScreen() ,
     '/SignUp':(BuildContext context) => new SignUpScreen(),
-    '/Order':(BuildContext context) => new OrderScreen() 
+    '/Order':(BuildContext context) => new OrderScreen(),
+    '/RoutePlan':(BuildContext context) => new RoutePlan()  
 
    },
     );

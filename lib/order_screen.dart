@@ -3,6 +3,31 @@ import 'package:flutter/material.dart';
 class OrderScreen extends StatelessWidget {
   @override
  Widget build(BuildContext context) {
+    var stack = Stack(
+            children: [
+            Padding(padding: EdgeInsets.only(top:5),
+            child : Align(alignment: Alignment.centerRight,
+            child :Image.asset('images/splash.jpeg', width: 30,height: 30))),
+            Padding(padding: EdgeInsets.only(right: 30),
+            child: GestureDetector(
+            onTap: () => {
+            Navigator.of(context).pushNamed('/RoutePlan')},
+            child : Container(
+            color: Colors.transparent,
+            child: Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+            color: Color(0xFF0080E2),
+            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            child: new Center(
+            child: new Text("Order now", 
+            style: TextStyle(color: Colors.white, fontSize: 14),
+            textAlign: TextAlign.center),
+            )),
+            )
+           ),
+            )
+            ]);
    return Scaffold(
   body: ListView(
        padding: EdgeInsets.all(10.0),
@@ -14,7 +39,7 @@ class OrderScreen extends StatelessWidget {
           Padding(padding: EdgeInsets.only(left: 0),
           child : Center(
           child : Image.asset('images/splash.jpeg', width: 100,height: 110),)
-          )],),
+          )]),
         Card(
           elevation: 5,
           color: Color(0xFFFFFFFF),
@@ -217,11 +242,13 @@ class OrderScreen extends StatelessWidget {
           ]
           )
         ),
-        button
+         Padding(padding: EdgeInsets.only(top: 30),
+            child: stack)
        ]
      )
    );
  }
+ 
 }
 
 Widget box1 = Container(
