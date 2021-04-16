@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+
+import 'package:routeplan/order_reciept.dart';
 import 'package:routeplan/bookings/bookings.dart';
+
 import 'package:routeplan/route_plan.dart';
 import 'package:routeplan/signup_screen.dart';
 import 'package:routeplan/welcome_screen.dart';
 import 'package:routeplan/order_screen.dart';
+import 'package:routeplan/reciept_history.dart';
 
 
 import 'login_screen.dart';
@@ -18,12 +22,15 @@ class MyApplication extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-title: "My Application",
-home : WelcomeScreen(),
-routes: <String,WidgetBuilder>{
+     title: "My Application",
+     home : WelcomeScreen(),
+     routes: <String,WidgetBuilder>{
     '/login':(BuildContext context) => new LoginScreen() ,
     '/SignUp':(BuildContext context) => new SignUpScreen(),
     '/Order':(BuildContext context) => new OrderScreen(),
+    '/RoutePlan':(BuildContext context) => new RoutePlan(),
+    '/OrderReciept':(BuildContext context) => new OrderReciept(),
+    '/RecieptHistory':(BuildContext context) => new RecieptHistory() 
     '/RoutePlan':(BuildContext context) => new RoutePlan(), 
     '/bookings':(BuildContext context)=>new Bookings(),
    },

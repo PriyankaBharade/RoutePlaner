@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 
 class RoutePlan extends StatelessWidget {
+   @override
+ Widget build(BuildContext context) {
+   var stack = Stack(
+            children: [
+            Padding(padding: EdgeInsets.only(top:5),
+            child : Align(alignment: Alignment.centerRight,
+            child :Image.asset('images/splash.jpeg', width: 30,height: 30))),
+            Padding(padding: EdgeInsets.only(right: 30),
+            child: GestureDetector(
+            onTap: () => {
+            Navigator.of(context).pushNamed('/OrderReciept')},
+            child : Container(
+            color: Colors.transparent,
   @override
   Widget build(BuildContext context) {
     var stack = Stack(children: [
