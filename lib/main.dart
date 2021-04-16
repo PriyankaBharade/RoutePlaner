@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:routeplan/order_reciept.dart';
+import 'package:routeplan/bookings/bookings.dart';
+
 import 'package:routeplan/route_plan.dart';
 import 'package:routeplan/signup_screen.dart';
 import 'package:routeplan/welcome_screen.dart';
@@ -28,6 +31,8 @@ class MyApplication extends StatelessWidget {
     '/RoutePlan':(BuildContext context) => new RoutePlan(),
     '/OrderReciept':(BuildContext context) => new OrderReciept(),
     '/RecieptHistory':(BuildContext context) => new RecieptHistory() 
+    '/RoutePlan':(BuildContext context) => new RoutePlan(), 
+    '/bookings':(BuildContext context)=>new Bookings(),
    },
     );
   }
