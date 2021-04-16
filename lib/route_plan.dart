@@ -139,7 +139,7 @@ class RoutePlan extends StatelessWidget {
                Padding(padding: EdgeInsets.only(top: 30),
                child: Text('Thu, Apr 8' ,style: TextStyle(fontFamily: 'RobotoRegular',fontSize: 18,color: Color(0xFF000000))),
                ),
-               Padding(padding: EdgeInsets.only(top: 30),
+               Padding(padding: EdgeInsets.only(top: 30,bottom: 30),
                child: Text('8:35 PM - 8:45 PM' ,style: TextStyle(fontFamily: 'RobotoRegular',fontSize: 18,color: Color(0xFF000000))),
                ),
               ])
