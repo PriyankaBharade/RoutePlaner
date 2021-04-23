@@ -78,7 +78,7 @@ class OrderReciept extends StatelessWidget{
                alignment: Alignment.centerLeft),
                flex: 1),
                Expanded(
-               child: Container(child: Text('Conatiner',style: TextStyle(color: Color(0xFF000000),
+               child: Container(child: Text('Container',style: TextStyle(color: Color(0xFF000000),
                fontFamily: 'Roboto' ,
                fontSize:  14)
               )),

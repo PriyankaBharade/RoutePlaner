@@ -52,7 +52,8 @@ Widget Ongoing() {
                 ),
               ),
             );
-          }));
+          })
+          );
 }
 
 Widget _Details(title) {
