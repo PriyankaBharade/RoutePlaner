@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:form_field_validator/form_field_validator.dart';
 import 'datamodel/login_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:ndialog/ndialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String email = "", password = "";
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   bool visible = false;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         MaxLengthValidator(15,
                             errorText:
                                 "Password should not be greater than 15 characters")
-                      ]))),
+                      ])
+                      )),
               SizedBox(
                 height: 50,
                 child: TextButton(
@@ -106,11 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: Color(0xFFFF811F),
                       primary: Color(0xFFFFFFFF)),
                   onPressed: () {
-                     if (formkey.currentState!.validate()) {
+                    if (formkey.currentState!.validate()) {
                       print('Click on Login $email + "pass" $password');
-                     // showLoaderDialog(context);
-                      loginApi(context, email,password);
-                     }
+                      showLoaderDialog(context, true);
+                      loginApi(context, email, password);
+                    }
                   },
                   child: Text('Login'),
                 ),
@@ -160,18 +164,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginApi(BuildContext context, String email, String pass) async {
     var url = Uri.parse('https://routplaner.com/api/customerlogin');
+    final SharedPreferences prefs = await _prefs;
     await http.post(url,
         headers: {'Accept': 'application/json'},
         body: {"email": email, "password": pass}).then((response) {
       print(response.body);
       Map<String, dynamic> user = jsonDecode(response.body);
+       Navigator.pop(context);
       if (user["status"]) {
+        prefs.setString("user_data", response.body);
         LoginModel loginModel = LoginModel.fromJson(user);
-        print(loginModel.email);
-        Navigator.pop(context);
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(user["message"])));
-        Navigator.of(context).pushNamed('/Order');
+            .showSnackBar(SnackBar(content: Text(user["message"]),backgroundColor: Colors.greenAccent,));
+            Navigator.pushNamedAndRemoveUntil(context, "/Order", (r) => false);
+       // Navigator.of(context).pushNamed('/Order');
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(user["message"])));
@@ -183,48 +189,51 @@ class _LoginScreenState extends State<LoginScreen> {
 Widget horizontalList2 = new Container(
     margin: EdgeInsets.symmetric(vertical: 20.0),
     height: 200.0,
-    child: new ListView(scrollDirection: Axis.horizontal, children: <Widget>[
-      Text(
-        'Do not have an account?',
-        textAlign: TextAlign.left,
-        style: TextStyle(
-            fontSize: 12, color: Color(0xff000000), fontFamily: 'Roboto'),
-      ),
-      GestureDetector(
-          onTap: () {
-            // Navigator.of().pushNamed('/login');
-          },
+    child : Center(
+      child: ListView(scrollDirection: Axis.horizontal, children: <Widget>[
+      Padding(
+          padding: EdgeInsets.all(100),
           child: Text(
-            'Sign Up Here?',
+            'Do not have an account?',
             textAlign: TextAlign.left,
             style: TextStyle(
-                fontSize: 12, color: Color(0xff36B889), fontFamily: 'Roboto'),
+                fontSize: 12, color: Color(0xff000000), fontFamily: 'Roboto'),
           )),
-      Text('Forgot password?',
-          textAlign: TextAlign.right,
-          style: TextStyle(
-              fontSize: 12, color: Color(0xff000000), fontFamily: 'Roboto'))
-    ]));
+      Padding(
+          padding: EdgeInsets.all(100),
+          child: GestureDetector(
+              onTap: () {
+                // Navigator.of().pushNamed('/login');
+              },
+              child: Text(
+                'Sign Up Here?',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xff36B889),
+                    fontFamily: 'Roboto'),
+              ))),
+      Padding(
+          padding: EdgeInsets.all(100),
+          child: Text('Forgot password?',
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xff000000),
+                  fontFamily: 'Roboto')))
+    ]
+    ))
+    
+    );
 
-void showLoaderDialog(BuildContext context) {
-  AlertDialog alert = AlertDialog(
-    content: new Row(
-      children: [
-        CircularProgressIndicator(),
-        Container(margin: EdgeInsets.only(left: 7), child: Text("Loading...")),
-      ],
-    ),
-  );
-  showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
+void showLoaderDialog(BuildContext context, bool value) {
+  CustomProgressDialog progressDialog = CustomProgressDialog(context, blur: 10);
+
+  ///You can set Loading Widget using this function
+  progressDialog.setLoadingWidget(CircularProgressIndicator(
+      valueColor: AlwaysStoppedAnimation(Colors.red)));
+  progressDialog.show();
 }
-
-
 
 /* showPicker(BuildContext context) {
   showCupertinoDialog(

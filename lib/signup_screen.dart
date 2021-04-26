@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:ndialog/ndialog.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   //String dropdownValue = 'id';
   // // String countryCode = "";
-  var countryCodeValue;
+  var countryCodeValue = "+91";
   var countrynamevalue;
   var statevalue;
   var cityvalue;
@@ -184,6 +185,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             padding: const EdgeInsets.only(right: 2.0),
                             child: Container(
                               child: TextFormField(
+                                  showCursor: false,
+                                  enabled: false,
                                   controller: TextEditingController(
                                       text: '$countryCodeValue'),
                                   keyboardType: TextInputType.number,
@@ -205,6 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             padding: const EdgeInsets.only(left: 2.0),
                             child: Container(
                               child: TextFormField(
+                                  maxLength: 10,
                                   onChanged: (value) => mobilenumber = value,
                                   keyboardType: TextInputType.number,
                                   style: TextStyle(
@@ -304,6 +308,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             padding: const EdgeInsets.only(right: 2.0),
                             child: Container(
                               child: TextFormField(
+                                  maxLength: 5,
                                   keyboardType: TextInputType.number,
                                   onChanged: (value) => housenumber = value,
                                   style: TextStyle(
@@ -344,41 +349,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                        flex: 1,
-                        child: Padding(
-                            padding: const EdgeInsets.only(right: 2.0),
-                            child: Container(
+                      child: FutureBuilder<List<dynamic>>(
+                        builder: (context, projectSnap) {
+                          if (projectSnap.connectionState ==
+                                  ConnectionState.none &&
+                              projectSnap.hasData == null) {
+                            return Container();
+                          }
+                          List<dynamic> list = projectSnap.data!;
+                          return Container(
                               child: GestureDetector(
-                                onTap: () {
-                                 showCityListDialog(context, city);
-                                },
-                                child: TextFormField(
-                                   controller: TextEditingController(
-                                          text: cityvalue),
+                                  onTap: () {
+                                    //print("Call Country List");
+                                    showListDialog(context, list);
+                                  },
+                                  child: TextFormField(
+                                      controller: TextEditingController(
+                                          text: countrynamevalue),
                                       showCursor: false,
                                       enabled: false,
-                                    keyboardType: TextInputType.name,
-                                   // onChanged: (value) => cityname = value,
-                                    style: TextStyle(
-                                        fontSize: 14.0,
-                                        fontFamily: 'RobotoRegular'),
-                                    decoration: InputDecoration(
-                                      labelText: 'City',
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    validator: MultiValidator([
-                                      RequiredValidator(
-                                          errorText: "* Required"),
-                                    ])),
-                              ),
-                            ))),
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) => postalcode = value,
+                                      style: TextStyle(
+                                          fontSize: 14.0,
+                                          fontFamily: 'RobotoRegular'),
+                                      decoration: InputDecoration(
+                                        labelText: "Select Country",
+                                        border: OutlineInputBorder(),
+                                      ),
+                                      validator: MultiValidator([
+                                        RequiredValidator(
+                                            errorText: "* Required"),
+                                      ]))));
+                          //return spinnervalue(context, list);
+                          //  return showListDialog(context,list);
+                        },
+                        future: getCountryListApi(),
+                      ),
+                    ),
                     Expanded(
                       flex: 1,
                       child: Container(
                           child: GestureDetector(
                               onTap: () {
-                                //print("Call Country List");
                                 showStateListDialog(context, statelist);
+                                //print("Call Country List");
+                                /* if (countrynamevalue != null) {
+                                   showStateListDialog(context, statelist);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text("Please Select Country")));
+                                  } */
                               },
                               child: TextFormField(
                                   controller:
@@ -386,7 +408,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   showCursor: false,
                                   enabled: false,
                                   keyboardType: TextInputType.name,
-                                //  onChanged: (value) => cityname = value,
+                                  //  onChanged: (value) => cityname = value,
                                   style: TextStyle(
                                       fontSize: 14.0,
                                       fontFamily: 'RobotoRegular'),
@@ -427,44 +449,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           errorText: "* Required"),
                                     ]))))),
                     Expanded(
-                      child: FutureBuilder<List<dynamic>>(
-                        builder: (context, projectSnap) {
-                          if (projectSnap.connectionState ==
-                                  ConnectionState.none &&
-                              projectSnap.hasData == null) {
-                            return Container();
-                          }
-                          List<dynamic> list = projectSnap.data!;
-                          return Container(
+                        flex: 1,
+                        child: Padding(
+                            padding: const EdgeInsets.only(right: 2.0),
+                            child: Container(
                               child: GestureDetector(
-                                  onTap: () {
-                                    //print("Call Country List");
-                                    showListDialog(context, list);
-                                  },
-                                  child: TextFormField(
-                                      controller: TextEditingController(
-                                          text: countrynamevalue),
-                                      showCursor: false,
-                                      enabled: false,
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) => postalcode = value,
-                                      style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontFamily: 'RobotoRegular'),
-                                      decoration: InputDecoration(
-                                        labelText: "Select Country",
-                                        border: OutlineInputBorder(),
-                                      ),
-                                      validator: MultiValidator([
-                                        RequiredValidator(
-                                            errorText: "* Required"),
-                                      ]))));
-                          //return spinnervalue(context, list);
-                          //  return showListDialog(context,list);
-                        },
-                        future: getCountryListApi(),
-                      ),
-                    )
+                                onTap: () {
+                                  showCityListDialog(context, city);
+                                  /* if (statevalue != null) {
+                                    showCityListDialog(context, city);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text("Please Select State")));
+                                  } */
+                                },
+                                child: TextFormField(
+                                    controller:
+                                        TextEditingController(text: cityvalue),
+                                    showCursor: false,
+                                    enabled: false,
+                                    keyboardType: TextInputType.name,
+                                    // onChanged: (value) => cityname = value,
+                                    style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontFamily: 'RobotoRegular'),
+                                    decoration: InputDecoration(
+                                      labelText: 'City',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    validator: MultiValidator([
+                                      RequiredValidator(
+                                          errorText: "* Required"),
+                                    ])),
+                              ),
+                            )))
                   ],
                 ),
               ),
@@ -531,7 +550,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       state = datavalue[0]['statecode'];
       statelist = (datavalue);
     });
-    print(statelist.toString());
+    getCityList(state);
+    // print(statelist.toString());
     return Future.value(datavalue);
   }
 
@@ -543,18 +563,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final Map parsed = json.decode(response.body);
     print(response.body);
     List<dynamic> datavalue = parsed["citydetails"];
-    print("datavalue $datavalue");
     setState(() {
       cityvalue = datavalue[0]['cityname'];
       cityname = datavalue[0]['citycode'];
       city = (datavalue);
     });
+    getStateList(cityname);
     // print(statelist.toString());
     return Future.value(datavalue);
   }
 
   void showStateListDialog(BuildContext context, List<dynamic> dataCountry) {
-    AlertDialog alert = AlertDialog(
+    Dialog(
+        child: ListView.builder(
+      itemCount: dataCountry.length,
+      itemBuilder: (BuildContext context, index) {
+        Map<String, dynamic> map = dataCountry[index];
+        return Column(children: [
+          GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(map['statename']),
+              ),
+              onTap: () {
+                Navigator.pop(context, map);
+                setState(() {
+                  statevalue = map['statename'];
+                  state = map['statecode'];
+                });
+                getCityList(map['statecode']);
+              })
+        ]);
+      },
+    )).show(context);
+    /* AlertDialog alert = AlertDialog(
       content: ListView.builder(
         itemCount: dataCountry.length,
         itemBuilder: (BuildContext context, index) {
@@ -584,11 +626,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
         statevalue = value['statename'];
         state = value['statecode'];
       });
-    });
+    }); */
   }
 
   void showCityListDialog(BuildContext context, List<dynamic> dataCity) {
-    AlertDialog alert = AlertDialog(
+    Dialog(
+        child: ListView.builder(
+      itemCount: dataCity.length,
+      itemBuilder: (BuildContext context, index) {
+        Map<String, dynamic> map = dataCity[index];
+        return Column(children: [
+          GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(map['cityname']),
+              ),
+              onTap: () {
+                Navigator.pop(context, map);
+                setState(() {
+                  cityvalue = map['cityname'];
+                  cityname = map['citycode'];
+                });
+              })
+        ]);
+      },
+    )).show(context);
+    /*  AlertDialog alert = AlertDialog(
       content: ListView.builder(
         itemCount: dataCity.length,
         itemBuilder: (BuildContext context, index) {
@@ -617,40 +680,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
         cityvalue = value['cityname'];
         cityname = value['citycode'];
       });
-    });
+    }); */
   }
 
   void showListDialog(BuildContext context, List<dynamic> dataCountry) {
-    AlertDialog alert = AlertDialog(
-      content: ListView.builder(
+    Dialog(
+      child: ListView.builder(
         itemCount: dataCountry.length,
         itemBuilder: (BuildContext context, index) {
           Map<String, dynamic> map = dataCountry[index];
           return Column(children: [
             GestureDetector(
-                child: Text(map['country_name']),
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Text(map['country_name']),
+                ),
                 onTap: () {
                   Navigator.pop(context, map);
+                  setState(() {
+                    countryCodeValue = map['dialingcode'];
+                    countrynamevalue = map['country_name'];
+                    countryCode = countryCodeValue;
+                    countryname = countrynamevalue;
+                  });
                   getStateList(map['countrycode']);
                 })
           ]);
         },
       ),
-    );
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    ).then((value) {
-      setState(() {
-        countryCodeValue = value['dialingcode'];
-        countrynamevalue = value['country_name'];
-        countryCode = countryCodeValue;
-        countryname = countrynamevalue;
-      });
-    });
+    ).show(context);
   }
 }
 
@@ -687,11 +745,12 @@ void signUpAPI(
   }).then((response) {
     print(response.body);
     Map<String, dynamic> user = jsonDecode(response.body);
+    Navigator.pop(context);
     if (user["status"]) {
-      Navigator.pop(context);
-      Navigator.of(context).pushNamed('/login');
+    //  Navigator.of(context).pushNamedAndRemoveUntil(context,'/login',(r) => false);
+      Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(user["message"])));
+          .showSnackBar(SnackBar(content: Text(user["message"]),backgroundColor: Colors.greenAccent));
       //  LoginModel loginModel = LoginModel.fromJson(user);
       // print(loginModel.email);
       // Navigator.of(context).pushNamed('/SignUp');
@@ -703,7 +762,13 @@ void signUpAPI(
 }
 
 void showLoaderDialog(BuildContext context) {
-  AlertDialog alert = AlertDialog(
+  CustomProgressDialog progressDialog = CustomProgressDialog(context, blur: 10);
+
+  ///You can set Loading Widget using this function
+  progressDialog.setLoadingWidget(CircularProgressIndicator(
+      valueColor: AlwaysStoppedAnimation(Colors.red)));
+  progressDialog.show();
+  /*  AlertDialog alert = AlertDialog(
     content: new Row(
       children: [
         CircularProgressIndicator(),
@@ -717,5 +782,26 @@ void showLoaderDialog(BuildContext context) {
     builder: (BuildContext context) {
       return alert;
     },
-  );
+  ); */
+
+  /*  showDialog(
+    context: context,
+    builder: (context) => CustomDialog(
+      content: Text(
+        'No Access',
+        style: TextStyle(
+          fontWeight: FontWeight.w900,
+          fontSize: 20.0,
+        ),
+      ),
+      title: Text('Error'),
+      firstColor: Colors.red,
+      secondColor: Colors.white,
+      headerIcon: Icon(
+        Icons.error_outline,
+        size: 120.0,
+        color: Colors.white,
+      ),
+    ),
+  ); */
 }

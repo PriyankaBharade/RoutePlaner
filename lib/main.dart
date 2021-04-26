@@ -8,7 +8,6 @@ import 'package:routeplan/signup_screen.dart';
 import 'package:routeplan/welcome_screen.dart';
 import 'package:routeplan/order_screen.dart';
 import 'package:routeplan/reciept_history.dart';
-import 'package:routeplan/Component/jsonspinner.dart';
 
 
 import 'login_screen.dart';
@@ -25,6 +24,7 @@ class MyApplication extends StatelessWidget {
       debugShowCheckedModeBanner: false,
      title: "My Application",
      home : WelcomeScreen(),
+    // home : MyHomePage(),
    //  home : JsonSpinner(),
      routes: <String,WidgetBuilder>{
     '/login':(BuildContext context) => new LoginScreen() ,
