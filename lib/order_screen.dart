@@ -715,10 +715,13 @@ class _OrderScreen extends State<OrderScreen> {
   }
 
   void booking(BuildContext context) async {
+   
     final SharedPreferences prefs = await _prefs;
     Map<String, dynamic> user =
         jsonDecode(prefs.getString("user_data").toString());
     var url = Uri.parse('https://routplaner.com/api/createpacketorder');
+     print(user["customerId"]);
+     print(user["accessToken"]);
     await http.post(url, headers: {
       'Accept': 'application/json'
     }, body: {
@@ -751,7 +754,7 @@ class _OrderScreen extends State<OrderScreen> {
       Navigator.pop(context);
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data["status"]) {
-        //  prefs.setString("order_id", data["orderId"]);
+         prefs.setString("order_id", data["orderId"]);
         Navigator.of(context).pushNamed('/OrderReciept');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(data["message"]),

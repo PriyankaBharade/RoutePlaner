@@ -8,8 +8,7 @@ import 'package:routeplan/signup_screen.dart';
 import 'package:routeplan/welcome_screen.dart';
 import 'package:routeplan/order_screen.dart';
 import 'package:routeplan/reciept_history.dart';
-
-
+import 'package:routeplan/bottom_navigation/navigation.dart';
 import 'login_screen.dart';
 
 void main() {
@@ -23,7 +22,21 @@ class MyApplication extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
      title: "My Application",
-     home : WelcomeScreen(),
+    home : WelcomeScreen(),
+    /*  theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+          cardColor: Colors.black,
+          indicatorColor: Colors.white),
+      home: Navigation(), */
     // home : MyHomePage(),
    //  home : JsonSpinner(),
      routes: <String,WidgetBuilder>{
@@ -34,6 +47,7 @@ class MyApplication extends StatelessWidget {
     '/OrderReciept':(BuildContext context) => new OrderReciept(),
     '/RecieptHistory':(BuildContext context) => new RecieptHistory() ,
     '/bookings':(BuildContext context)=>new Bookings(),
+    '/navigation':(BuildContext context)=>new Navigation(),
    },
     );
   }

@@ -6,6 +6,7 @@ import 'datamodel/login_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -101,8 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         MaxLengthValidator(15,
                             errorText:
                                 "Password should not be greater than 15 characters")
-                      ])
-                      )),
+                      ]))),
               SizedBox(
                 height: 50,
                 child: TextButton(
@@ -145,14 +145,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Color(0xff36B889),
                                 fontFamily: 'Roboto'),
                           )),
-                      Text(
-                        'Forgot password?',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xff000000),
-                            fontFamily: 'Roboto'),
-                      ),
+                      GestureDetector(
+                          onTap: () {
+                            showEnterPassword(context);
+                          },
+                          child: Text(
+                            'Forgot password?',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xff000000),
+                                fontFamily: 'Roboto'),
+                          )),
                     ],
                   )),
               // horizontalList2
@@ -170,27 +174,30 @@ class _LoginScreenState extends State<LoginScreen> {
         body: {"email": email, "password": pass}).then((response) {
       print(response.body);
       Map<String, dynamic> user = jsonDecode(response.body);
-       Navigator.pop(context);
+      Navigator.pop(context);
       if (user["status"]) {
         prefs.setString("user_data", response.body);
         LoginModel loginModel = LoginModel.fromJson(user);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(user["message"]),backgroundColor: Colors.greenAccent,));
-            Navigator.pushNamedAndRemoveUntil(context, "/Order", (r) => false);
-       // Navigator.of(context).pushNamed('/Order');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(user["message"]),
+          backgroundColor: Colors.green,
+        ));
+        Navigator.pushNamedAndRemoveUntil(context, "/navigation", (r) => false);
+        // Navigator.of(context).pushNamed('/Order');
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(user["message"])));
+            .showSnackBar(SnackBar(content: Text(user["message"]),
+            backgroundColor: Colors.red));
       }
     });
   }
 }
 
-Widget horizontalList2 = new Container(
+/* Widget horizontalList2 = new Container(
     margin: EdgeInsets.symmetric(vertical: 20.0),
     height: 200.0,
-    child : Center(
-      child: ListView(scrollDirection: Axis.horizontal, children: <Widget>[
+    child: Center(
+        child: ListView(scrollDirection: Axis.horizontal, children: <Widget>[
       Padding(
           padding: EdgeInsets.all(100),
           child: Text(
@@ -221,10 +228,7 @@ Widget horizontalList2 = new Container(
                   fontSize: 12,
                   color: Color(0xff000000),
                   fontFamily: 'Roboto')))
-    ]
-    ))
-    
-    );
+    ]))); */
 
 void showLoaderDialog(BuildContext context, bool value) {
   CustomProgressDialog progressDialog = CustomProgressDialog(context, blur: 10);
@@ -235,35 +239,249 @@ void showLoaderDialog(BuildContext context, bool value) {
   progressDialog.show();
 }
 
-/* showPicker(BuildContext context) {
-  showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoPicker(
-          backgroundColor: Colors.white,
-          onSelectedItemChanged: (value) {
-            print(value);
-            // setState(() {
-            //   selectedValue = value;
-            // });
+void showEnterPassword(BuildContext context) {
+  String phone_number = "";
+  NAlertDialog(
+    title: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text("Forgot Password?"),
+    ),
+    content: Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: TextFormField(
+          keyboardType: TextInputType.number,
+          onChanged: (value) => phone_number = value,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Phone',
+              hintText: '1234567890'),
+          validator: MultiValidator([
+            RequiredValidator(errorText: "* Required"),
+          ])),
+    ),
+    actions: <Widget>[
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+              backgroundColor: Color(0xFFFF811F), primary: Color(0xFFFFFFFF)),
+          onPressed: () {
+            if (phone_number != null && phone_number.isNotEmpty) {
+              sendOtpApi(context, phone_number);
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Please enter your valid mobile number",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
           },
-          itemExtent: 32.0,
-          children: [
-            ListView.builder(
-              itemCount: 10,
-              itemBuilder: (BuildContext context, index) {
-                return Column(
-                 children: [
-                   Text("Country")
-                 ],);
-              },
-            )
-          ],
-          /*  children: const [
-              Text('Item01'),
-              Text('Item02'),
-              Text('Item03'),
-            ], */
-        );
-      });
-} */
+          child: Text('Send otp'),
+        ),
+      )
+    ],
+    blur: 2,
+  ).show(context, transitionType: DialogTransitionType.BottomToTop);
+}
+
+void sendOtpApi(BuildContext context, String mobile) async {
+  showLoaderDialog(context, false);
+  var url = Uri.parse('https://routplaner.com/api/customerforgotpwdotpgen');
+  await http.post(url,
+      headers: {'Accept': 'application/json'},
+      body: {"phone": mobile}).then((response) {
+    print(response.body);
+    Map<String, dynamic> user = jsonDecode(response.body);
+    Navigator.pop(context);
+    if (user["status"]) {
+      Navigator.pop(context);
+      EnterOtpDialog(context, user["otp"], user["customerId"]);
+      Fluttertoast.showToast(
+          msg: user["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: user["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  });
+}
+
+void EnterOtpDialog(BuildContext context, String otp, String customerId) {
+  print("Enter Dialod customerId$customerId");
+  String enter_otp = "";
+  NAlertDialog(
+    title: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+          "Otp successfully sent on your mobile number! please enter the valid otp here"),
+    ),
+    content: Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: TextFormField(
+          keyboardType: TextInputType.number,
+          onChanged: (value) => enter_otp = value,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(), labelText: 'Otp', hintText: '1234'),
+          validator: MultiValidator([
+            RequiredValidator(errorText: "* Required"),
+          ])),
+    ),
+    actions: <Widget>[
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+              backgroundColor: Color(0xFFFF811F), primary: Color(0xFFFFFFFF)),
+          onPressed: () {
+            if (enter_otp != null && enter_otp.isNotEmpty) {
+              verifyOtpApi(context, enter_otp, customerId);
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Please enter valid otp here",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          },
+          child: Text('Verify otp'),
+        ),
+      )
+    ],
+    blur: 2,
+  ).show(context, transitionType: DialogTransitionType.BottomToTop);
+}
+
+void verifyOtpApi(BuildContext context, String otp, String customerId) async {
+  showLoaderDialog(context, false);
+  var url = Uri.parse('https://routplaner.com/api/customerforgotpwdotpverify');
+  await http.post(url,
+      headers: {'Accept': 'application/json'},
+      body: {"otp": otp, "customerId": customerId}).then((response) {
+    print(response.body);
+    Map<String, dynamic> user = jsonDecode(response.body);
+    Navigator.pop(context);
+    if (user["status"]) {
+      Navigator.pop(context);
+      ResetPassworDialog(context,customerId);
+      Fluttertoast.showToast(
+          msg: user["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: user["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  });
+}
+
+void ResetPassworDialog(BuildContext context, String customerId) {
+  print("Enter Dialod customerId$customerId");
+  String newpassword = "";
+  NAlertDialog(
+    title: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text("Enter new password"),
+    ),
+    content: Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: TextFormField(
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: true,
+          onChanged: (value) => newpassword = value,
+          decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'New Password',
+              hintText: '1234'),
+          validator: MultiValidator([
+            RequiredValidator(errorText: "* Required"),
+          ])),
+    ),
+    actions: <Widget>[
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextButton(
+          style: TextButton.styleFrom(
+              backgroundColor: Color(0xFFFF811F), primary: Color(0xFFFFFFFF)),
+          onPressed: () {
+            if (newpassword != null && newpassword.isNotEmpty) {
+              customerupdatepassword(context, newpassword, customerId);
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Enter passowrd here",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          },
+          child: Text('Update Password'),
+        ),
+      )
+    ],
+    blur: 2,
+  ).show(context, transitionType: DialogTransitionType.BottomToTop);
+}
+
+void customerupdatepassword(BuildContext context,  String password,String customerId) async {
+  showLoaderDialog(context, false);
+  var url = Uri.parse('https://routplaner.com/api/customerupdatepassword');
+  await http.post(url, headers: {
+    'Accept': 'application/json'
+  }, body: {
+    "new_password": password,
+    "customerId": customerId
+  }).then((response) {
+    print(response.body);
+    Map<String, dynamic> user = jsonDecode(response.body);
+    Navigator.pop(context);
+    if (user["status"]) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(
+          msg: user["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: user["message"],
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  });
+}

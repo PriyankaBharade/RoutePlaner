@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:routeplan/bottom_navigation/navigation.dart';
 
 class WelcomeScreen extends StatelessWidget {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -50,15 +51,14 @@ class WelcomeScreen extends StatelessWidget {
           jsonDecode(prefs.getString("user_data").toString());
       if (user != null && user["customerId"] != "") {
        // Navigator.of(context).pushNamed('/Order');
-        Navigator.pushNamedAndRemoveUntil(context, "/Order", (r) => false);
+        Navigator.pushNamedAndRemoveUntil(context, "/navigation", (r) => false);
       } else {
       //  Navigator.of(context).pushNamed('/login');
        Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
       }
     }else{
     //  Navigator.of(context).pushNamed('/login');
-      Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false);
-      
+      Navigator.pushNamedAndRemoveUntil(context, "/login", (r) => false); 
     }
   }
 }
